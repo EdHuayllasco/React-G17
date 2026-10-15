@@ -1,3 +1,5 @@
+import Footer from "./components/Footer"
+import Header from "./components/Header"
 import ProductCard from "./components/ProductCard"
 import { productos } from "./datos"
 
@@ -6,14 +8,13 @@ import { productos } from "./datos"
 export default function App() {
   return (
     <main className="mx-auto max-w-5xl p-6">
-      <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Tienda Tec</h1>
-        <p>🛒 0 productos</p>
-      </header>
+      <Header nombre="TecCart" eslogan="Una Vida Tecnologica"/>
+      <Header nombre="FalabellaProductos"/>
       {/* PROPS */}
       <ProductCard producto={productos[0]}/>
       <ProductCard producto={productos[1]}/>
       <ProductCard producto={productos[2]}/>
+      <Footer/>
     </main>
   )
 }
