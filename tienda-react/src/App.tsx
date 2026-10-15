@@ -11,9 +11,11 @@ export default function App() {
       <Header nombre="TecCart" eslogan="Una Vida Tecnologica"/>
       <Header nombre="FalabellaProductos"/>
       {/* PROPS */}
-      <ProductCard producto={productos[0]}/>
-      <ProductCard producto={productos[1]}/>
-      <ProductCard producto={productos[2]}/>
+      <section>
+        {
+          productos.map((p) => <ProductCard producto={p} key={p.id}/>)
+        }
+      </section>
       <Footer/>
     </main>
   )
