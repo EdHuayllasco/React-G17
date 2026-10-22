@@ -2,21 +2,42 @@ import { useState, useEffect } from "react"
 import Footer from "./components/Footer"
 import Header from "./components/Header"
 import ProductCard from "./components/ProductCard"
-import { productos } from "./datos"
-import type {EstadoCarga, ItemCarrito, Producto, Categoria} from "./tipos"
+import type {EstadoCarga, ItemCarrito, Producto} from "./tipos"
 import { agregarItem, quitarItem } from "./carrito"
 import formatearPrecio from "./formato"
+import { obtenerProductos } from "./api"
+import SkeletonCard from "./components/SkeletonCard"
 
-const estado = 'listo' as EstadoCarga;
-const categorias : Categoria[]= ['todas','laptops','audio','relojes','computadoras'];
 const CLAVE_CARRITO = 'tienda_carrito';
 const nombreTienda = 'Tienda Tech';
 export default function App() {
   const [carrito, setCarrito] = useState<ItemCarrito[]>(leerCarrito);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
-  const [categoriaActiva, setCategoriaActiva] = useState<Categoria>('todas');
+  const [categoriaActiva, setCategoriaActiva] = useState<string>('todas');
   const [termino, setTermino] = useState('');
 
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [estado, setEstado] = useState<EstadoCarga>('cargando');
+  const [esRespaldo, setEsRespaldo] = useState(false);
+  const categorias = ['todas', ...new Set(productos.map(p => p.categoria))];
+  const [intento, setIntento] = useState(0);
+  useEffect(() => {
+    const controlador = new AbortController();
+    async function cargar () {
+      try {
+        const resultado = await obtenerProductos();
+        setProductos(resultado.productos);
+        setEsRespaldo(resultado.esRespaldo);
+        setEstado('listo');
+      } catch (error) {
+        if(error instanceof DOMException && error.name === 'AbortError') return;
+        console.warn('Fallo imprevisto al cargar');
+        setEstado('error');
+      }
+    }
+    cargar();
+    return () => controlador.abort();
+  },[intento])
   useEffect( () => {
     try {
       localStorage.setItem(CLAVE_CARRITO, JSON.stringify(carrito));
@@ -36,7 +57,7 @@ export default function App() {
   useEffect(() => {
     document.title = `${nombreTienda} - ${visibles.length} resultados`;
   },[visibles.length]);
-  
+
   function agregarAlCarrito(producto : Producto) {
     setCarrito(agregarItem(producto, carrito))
   }
@@ -71,13 +92,27 @@ export default function App() {
             value={termino} aria-label="Buscar productos"
             onChange={(e) => setTermino(e.target.value)}
             />
-      {visibles.length === 0 && (
+      {estado === 'listo' && visibles.length === 0 && (
         <p className="text-gray-500">{
           busqueda !== '' ? `No encontramos productos para "${termino.trim()}"` : 'No hay productos en esta categoria'
         }</p>
       )}
+      {
+        esRespaldo && (
+          <p className="mb-4 rounded-lg border border-orange-300 bg-orange-500 p-2 text-sm">
+            Mostrando el catalogo Local, no pudimos conectar con la tienda.
+            <button className="ml-2 underline" onClick={() => {setIntento(intento + 1); setEstado('cargando')}}>Reintentar</button>
+          </p>
+        )
+      }
       <p className="mb-4 text-sm text-gray-500">{visibles.length} productos</p>
-      {estado === 'cargando' && <p className="text-gray-500">Cargando catalogo...</p>}
+      {estado === 'cargando' && (
+        <section className="flex flex-wrap gap-4">
+          {Array.from({length : 8}).map((_, indice) => (
+            <SkeletonCard key={indice}/>
+          ))}
+        </section>
+      )}
       {estado === 'error' && <p className="text-red-600">No pudimos cargar los productos</p>}
       {estado === 'listo' && (
           <section>
