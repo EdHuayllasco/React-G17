@@ -89,15 +89,14 @@ export default function App() {
           <Detalle productos={productos} onAgregar={agregarAlCarrito}/>
         }
         />
-        
+        <Route  path="/checkout" element = {
+            <Checkout carrito={carrito} total={total} onVaciar={vaciarCarrito}/>
+          }
+        />
       </Route>
       <Route path="*" element ={
           <NoEncontrada/>
       }/>
-      <Route  path="/checkout" element = {
-          <Checkout carrito={carrito} total={total} onVaciar={vaciarCarrito}/>
-        }
-      />
     </Routes>
   )
 }
