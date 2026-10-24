@@ -1,5 +1,5 @@
 import formatearPrecio from "../formato";
-import type { Producto } from "../tipos";
+import type { Producto } from "../../dominio/tipos";
 import EtiquetaStock from "./EtiquetaStock";
 
 interface Props {

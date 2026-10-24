@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
-
+import formatearPrecio from "../formato";
+import { useCart } from "../../aplicacion/useCart";
 interface Props {
     nombre : string;
     eslogan?: string;
-    resumen?:  string;
 }
-export default function Header ( {nombre , eslogan = "Tecnologia para todos", resumen} : Props) {
+export default function Header ( {nombre , eslogan = "Tecnologia para todos"} : Props) {
+    const {unidades, total} = useCart();
     return(
         <header className="mb-6 flex items-center justify-between">
             <div>
@@ -16,7 +17,7 @@ export default function Header ( {nombre , eslogan = "Tecnologia para todos", re
                     <NavLink to="/checkout" className={({isActive}) => (isActive ? 'font-bold underline' : 'hover:underline')}>Checkout</NavLink>
                 </nav>
             </div>
-            <p>{ resumen ?? '🛒 0 productos'}</p>
+            <p>{unidades} productos - {formatearPrecio(total)}</p>
         </header>
     )
 }

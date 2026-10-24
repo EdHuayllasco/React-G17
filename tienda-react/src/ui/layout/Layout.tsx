@@ -1,30 +1,21 @@
 import { useState } from "react";
 import Header from "../components/Header";
-import type { ItemCarrito } from "../tipos";
 import PanelCarrito from "../components/PanelCarrito";
 import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
+import { NOMBRE_TIENDA } from "../../dominio/tipos";
 
-interface Props {
-    nombreTienda : string;
-    resumen :  string;
-    items : ItemCarrito[];
-    onQuitar : (id : number) => void;
-    onVaciar : () => void;
-}
 
-export default function ({nombreTienda, resumen, items, onQuitar, onVaciar} : Props) {
+export default function () {
     const [carritoAbierto, setCarritoAbierto] = useState(false);
     return (
         <main className="mx-auto max-w-5xl p-6">
-            <Header nombre={nombreTienda} eslogan="Una Vida Tecnologica" 
-            //`🛒 ${unidades} productos - ${formatearPrecio(total)}`
-            resumen={resumen}/>
+            <Header nombre={NOMBRE_TIENDA} eslogan="Una Vida Tecnologica"/>
             <button className="mb-4 text-sm" 
             onClick={() => setCarritoAbierto(!carritoAbierto)}>
                 {carritoAbierto ? 'Ocultar carrito' : 'Ver carrito'}
             </button>
-            {carritoAbierto && (<PanelCarrito carrito={items} onQuitar={onQuitar} onVaciar={onVaciar}/>)}
+            {carritoAbierto && (<PanelCarrito/>)}
             <Outlet/>
             <Footer/>
         </main>

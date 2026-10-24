@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
-import type { EstadoCarga, Producto } from "../tipos";
+import type { EstadoCarga, Producto } from "../../dominio/tipos";
 import SkeletonCard from "../components/SkeletonCard";
 import ProductCard from "../components/ProductCard";
+import { useCart } from "../../aplicacion/useCart";
 
 interface Props {
     esRespaldo : boolean ;
     OnReintentar : () => void;
     productos : Producto[];
     estado : EstadoCarga;
-    onAgregar : (Producto : Producto) => void;
 }   
 const nombreTienda = 'Tienda Tech';
 
-export function Home ( {esRespaldo, OnReintentar, productos, estado, onAgregar} : Props) {
+export function Home ( {esRespaldo, OnReintentar, productos, estado} : Props) {
+    const {agregar} = useCart();
 
     const categorias = ['todas', ...new Set(productos.map(p => p.categoria))];
     const [categoriaActiva, setCategoriaActiva] = useState<string>('todas');
@@ -69,7 +70,7 @@ export function Home ( {esRespaldo, OnReintentar, productos, estado, onAgregar} 
             {estado === 'listo' && (
                 <section>
                 {
-                    visibles.map((p) => <ProductCard producto={p} key={p.id} onAgregar={onAgregar}/>)
+                    visibles.map((p) => <ProductCard producto={p} key={p.id} onAgregar={agregar}/>)
                 }
                 </section>
                 )

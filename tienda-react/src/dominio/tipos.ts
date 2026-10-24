@@ -7,7 +7,7 @@ export interface Producto {
     stock : number;
     categoria : string;
 }
-
+export const NOMBRE_TIENDA = 'Tienda Tech';
 export type Categoria = 'todas'| 'laptops'|'audio'|'relojes'|'computadoras';
 export type EstadoCarga = 'cargando' | 'listo' | 'error';
 
