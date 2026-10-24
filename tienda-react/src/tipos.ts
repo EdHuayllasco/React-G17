@@ -17,3 +17,18 @@ export interface ItemCarrito  {
     precio : number;
     cantidad : number;
 }
+
+export interface DatosEnvio {
+    nombre: string;
+    email : string; 
+    direccion : string;
+    telefono : string;
+}
+
+export interface Pedido {
+    id: number;
+    fecha : string;
+    cliente : DatosEnvio;
+    items : ItemCarrito[];
+    total : number;
+}
