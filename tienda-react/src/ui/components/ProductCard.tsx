@@ -1,13 +1,14 @@
 import formatearPrecio from "../formato";
 import type { Producto } from "../../dominio/tipos";
 import EtiquetaStock from "./EtiquetaStock";
+import { memo } from "react";
 
 interface Props {
   producto : Producto;
   onAgregar : (producto : Producto) => void;
 }
 
-export default function ProductCard({ producto, onAgregar } : Props) {
+function ProductCard({ producto, onAgregar } : Props) {
   const agotado = producto.stock === 0;
   return (
     <article className={`w-64 rounded-xl border p-4 ${agotado && 'opacity-50'}`}>
@@ -28,3 +29,5 @@ export default function ProductCard({ producto, onAgregar } : Props) {
     </article>
   )
 }
+
+export default memo(ProductCard);
