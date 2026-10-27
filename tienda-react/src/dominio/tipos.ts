@@ -32,3 +32,10 @@ export interface Pedido {
     items : ItemCarrito[];
     total : number;
 }
+
+export interface Usuario {
+    id : number; 
+    nombre : string;
+    email : string ; 
+    token : string;
+}
