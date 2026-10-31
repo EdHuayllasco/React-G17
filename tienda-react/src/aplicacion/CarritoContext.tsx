@@ -1,6 +1,6 @@
-import { createContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useEffect, useReducer, type ReactNode } from "react";
 import type { ItemCarrito, Producto } from "../dominio/tipos";
-import { agregarItem, quitarItem } from "../dominio/carrito";
+import { reducirCarrito } from "../dominio/carrito";
 
 interface ValorCarrito {
     items : ItemCarrito[];
@@ -9,6 +9,7 @@ interface ValorCarrito {
     agregar: (producto : Producto) => void;
     quitar: (id : number) => void;
     vaciar: () => void;
+    cambiarCantidad : (id: number, cantidad : number) => void;
 }
 const CLAVE_CARRITO = 'tienda_carrito';
 export const CarritoContext = createContext<ValorCarrito | null>(null);
@@ -23,7 +24,7 @@ function leerCarrito() : ItemCarrito[] {
 }
 
 export function CarritoProvider({children} : {children : ReactNode}) {
-    const [carrito, setCarrito] = useState<ItemCarrito[]>(leerCarrito);
+    const [carrito, despachar] = useReducer(reducirCarrito, [], leerCarrito);
     useEffect( () => {
         try {
           localStorage.setItem(CLAVE_CARRITO, JSON.stringify(carrito));
@@ -34,17 +35,19 @@ export function CarritoProvider({children} : {children : ReactNode}) {
     const unidades = carrito.reduce((suma, i) => suma + i.cantidad, 0);
     const total = carrito.reduce((suma, i) => suma + i.precio * i.cantidad, 0);
     function agregar(producto : Producto) {
-        setCarrito(agregarItem(producto, carrito))
+        despachar({tipo: 'agregar', producto})
     }
     function quitar(id : number) {
-        setCarrito(quitarItem(carrito, id));
+        despachar({tipo: 'quitar', id});
     }
     function vaciar() {
-        setCarrito([]);
+        despachar({tipo: 'vaciar'});
     }
-
+    function cambiarCantidad( id : number, cantidad: number) {
+        despachar({tipo:'cambiarCantidad', id, cantidad})
+    }
     return(
-        <CarritoContext.Provider value={{items : carrito, unidades, total, agregar, quitar,vaciar}}>
+        <CarritoContext.Provider value={{items : carrito, unidades, total, agregar, quitar,vaciar, cambiarCantidad}}>
             {children}
         </CarritoContext.Provider>
     )

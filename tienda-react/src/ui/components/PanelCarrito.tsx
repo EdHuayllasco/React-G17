@@ -1,7 +1,7 @@
 import { useCart } from "../../aplicacion/useCart";
 
 export default function PanelCarrito () {
-    const {items, quitar, vaciar} = useCart();
+    const {items, quitar, vaciar, cambiarCantidad} = useCart();
     return (
         <section className="mb-6 rounded-xl border p-4">
             <h2 className="font-semibold">Tu carrito</h2>
@@ -10,9 +10,21 @@ export default function PanelCarrito () {
                 {
                 items.map((item) => (
                     <li key={item.id} className="flex items-center justify-between py-1 text-sm">
-                        <span>{item.nombre} x {item.cantidad}</span>
-                        {/* () => setCarrito(quitarItem(carrito, item.id)) */}
-                        <button onClick={() => quitar(item.id)} aria-label="Quitar del barrito">X</button>
+                        <span>{item.nombre}</span>
+                        <span className="flex items-center gap-2">
+                          <button
+                          className="rounded border px-2" 
+                          onClick={() => cambiarCantidad(item.id, item.cantidad - 1)} 
+                          aria-label="Quitar una unidad del carrito">-</button>
+                        <span>{item.cantidad}</span>
+                        <button
+                        className="rounded border px-2"
+                        onClick={() => cambiarCantidad(item.id, item.cantidad + 1)}
+                        aria-label="Agregar una unidad al item">
+                          +
+                        </button>
+                        <button onClick={() => quitar(item.id)} aria-label="Quitar el elemento completo">X</button>
+                        </span>
                     </li>
                     ))
                   }
